@@ -1,0 +1,13 @@
+{
+	"version":"1.0"
+	,"name":"ART import"
+	,"description":"NHC System Resolution"
+	,"icons":{"16":null,"48":"img/icons/icon.png","128":null}
+	,"developer":{"url":"","name":"Pooben Dass","company":null,"email":null}
+	,"launch_path":"index.html"
+	,"installs_allowed_from":null
+	,"default_locale":"en"
+	,"activities": {
+	  "dhis": { "href": "*" }
+	}
+}

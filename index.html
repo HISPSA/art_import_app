@@ -1,0 +1,104 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>ART Cohort upload</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap -->
+    <link type="text/css" rel="stylesheet" href="../../../dhis-web-commons/bootstrap/css/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="../../../dhis-web-commons/font-awesome/css/font-awesome.min.css"/>
+    <link type="text/css" rel="stylesheet" media="screen" href="../../../dhis-web-commons/css/menu.css">
+    <link type="text/css" rel="stylesheet" href="css/datatables/jquery.dataTables.min.css"/>
+    <link href="css/custom.css" rel="stylesheet">
+    <!--script src="js/respond.min.js"></script-->
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+      <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body>
+<div id="header" style="background:#276696;overflow: auto">
+  <!--  <img id="headerBanner" src="../../../api/staticContent/logo_banner" onclick="window.location.href='../../../dhis-web-commons-about/redirect.action'" style="cursor:pointer" title="">-->
+  <div id="dhisDropDownMenu" ></div>
+</div>
+<div id="wrap">    
+   
+        <!-- row 1: header -->
+        
+        <header>
+            <div class="container">
+                <div class="row">
+                    <img src="img/logo.jpg" class="img-responsive" alt="Art Cohort Upload">
+                </div>
+            </div>
+        </header>
+    
+ <div id="main" class="container">
+        <!-- row 3: article/aside -->
+        <div>
+                <div>   
+                    <div class="panel panel-default">
+                      <div class="panel-heading">
+                        <h3 class="panel-title">ART Cohort XML import</h3>
+                      </div>
+                      <div class="panel-body">
+                        
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <div class="input-group">
+                                    <input type="file" class="file file-loading" data-allowed-file-extensions='["xml"]' id="fileID" data-show-preview="false">
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button" id="importButton">Import</button>
+                                    </span>
+                                </div><!-- /input-group -->
+                            </div><!-- /.col-lg-6 -->
+                        </div><!-- /.row -->
+                        
+                         
+                      </div>
+                    </div>
+                </div>
+
+        </div><!-- end row 3 -->
+
+        <div>
+            <div class="col-lg-6">
+                <div class="input-group">
+                    <p class="text-warning" id="responseMessage"></p>
+                                    
+                </div><!-- /input-group -->
+            </div><!-- /.col-lg-6 --
+        </div><!-- /.row -->
+        <div>
+        <table id="conflictTable" class="display" width="100%"></table>
+        </div> 
+        
+    </div><!-- end container -->
+    <div class="loader" id="spinner"></div>
+     <!--
+ <footer class="footer">
+    <a href="www.hispsa.org"><img src="img/hisp.png" class="logo" alt="www.hisp.org"></a>
+</footer>
+ -->
+    </div>
+    <!-- Main App Coding -->
+
+    <!-- javascript -->
+    <script src=js/artScript.js></script>
+    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/jQuery/jquery.min.js"></script>
+    <script type="text/javascript" src="../../../dhis-web-commons/bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/dhis2/dhis2.translate.js"></script>
+    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/dhis2/dhis2.util.js"></script>
+    <script type="text/javascript" src="js/datatables/jquery.dataTables.min.js"></script>
+    <!-- Menu dependencies -->
+    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/jQuery/ui/jquery-ui.min.js"></script>
+    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/dhis2/dhis2.menu.js"></script>
+    <script type="text/javascript" src="../../../dhis-web-commons/javascripts/dhis2/dhis2.menu.ui.js"></script>
+  <!-- // End menu -->
+
+</body>
+</html>

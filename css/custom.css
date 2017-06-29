@@ -1,0 +1,51 @@
+/* Custom styling for the Bootstrap website. 
+These styles do not ship with Bootstrap. 
+Some are overrides of existing Bootstrap styles, while others are new styles not existing in Bootstrap.
+In the starting CSS document, styles are based on custom classes not in Bootstrap.
+*/
+
+/* below styles are the default -- take effect at resolutions <768 px */
+
+html, body {
+  height: 100%;
+}
+
+#wrap {
+  min-height: 100%;
+}
+
+.logo {
+    display: block;
+    margin-left: auto;
+    margin-right: auto
+}
+
+/* footer styling for all resolutions */
+
+#main {
+  overflow:auto;
+  padding-bottom:150px; /* this needs to be bigger than footer height*/
+}
+
+.footer {
+  position: relative;
+  margin-top: -150px; /* negative value of footer height */
+  height: 150px;
+  clear:both;
+  padding-top:20px;
+} 
+
+.loader {
+    border: 16px solid #f3f3f3; /* Light grey */
+    border-top: 16px solid #3498db; /* Blue */
+    border-radius: 50%;
+    width: 120px;
+    height: 120px;
+    animation: spin 2s linear infinite;
+    display: none;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
