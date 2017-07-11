@@ -23,9 +23,6 @@
         var bypassItemArray = ['Cohort','OrgUnitCode','Duration', 'Age', 'OrgUnitName', 'Province', 'District', 'Subdistrict',
                           'CohortYear', 'ReportYear', 'ReportQuarter','pTOT','pKIDS','pChild1','pChild5','pChild15', 'PRG'];
         
-        var catComboDataelements = ['FLR', 'SLR', 'TLR', 'STO', 'VLD', 'VLS', 'RIP', 'LTF', 'TFO', 'TFI', 'RTC', 'ITR', 'RIPc', 'LTFc', 'TFOc', 'ITRc', 'RTCc',
-                               'pFLR', 'pSLR', 'pTLR', 'pSTO', 'pVLD', 'pVLS', 'pRIP', 'pLTF', 'pTFO', 'pTFI', 'pRTC', 'pITR', 'pRIPc', 'pLTFc', 'pTFOc', 'pITRc', 'pRTCc'];
-
         document.getElementById("responseMessage").innerHTML = '';
         document.getElementById("conflictTable").innerHTML = '';
         
@@ -59,13 +56,13 @@
                 //orgUnit
                 var artOrgUnitCode = artQuarterly.getElementsByTagName('OrgUnitCode')[0].firstChild.nodeValue;
                 // category option duration
-                duration = artQuarterly.getElementsByTagName('Duration')[0].firstChild.nodeValue;
+                var duration = artQuarterly.getElementsByTagName('Duration')[0].firstChild.nodeValue;
                 
-                var catcombo = "JO2HBbjqU3c";//"default"
-                switch (duration) {
+                var catcombo = "";//"default"
+                switch (parseInt(duration)) {
                 case 0:
                    catcombo = "AO4k8lTPUjo" //"D000 months"
-                    break;
+                   break;
                 case 3:
                    catcombo = "aZBz1KkuHm1" //"D003 months";
                     break;
@@ -85,7 +82,7 @@
                     catcombo = "YfkogCRSws8"; //"D048 months";
                     break;
                case 60:
-                   catcombo = "HxJj6ovGtlk"; //"D060 months";
+                    catcombo = "HxJj6ovGtlk"; //"D060 months";
                     break;
                 case 72:
                     catcombo = "qrXxTws7Y70"; //"D072 months";
@@ -129,8 +126,9 @@
                 case 228:
                     catcombo = "epZ0CZZRJpz"; //"D228 months";
                     break;
+                default:
+                    catcombo = "JO2HBbjqU3c";//"default"
                 }//select
-                
                 
                 var dataelementPrefix = '';
                 age = artQuarterly.getElementsByTagName('Age')[0].firstChild.nodeValue;
@@ -171,12 +169,7 @@
                             rowArray['dataElement'] = dataelementPrefix+jsonName;
                             rowArray['period'] = artPeriod;
                             rowArray['orgUnit'] = artOrgUnitCode;
-
-                            //need to get the correct catoption
-                            if (catComboDataelements.indexOf(jsonName) != -1){
-                                rowArray['categoryOptionCombo'] = catcombo;    
-                            } //if'
-
+                            rowArray['categoryOptionCombo'] = catcombo;    
                             rowArray['value'] = parseInt(artQuarterly.children[j].textContent);
                             jsonDataImport.push(rowArray);
                         } //if bypass
@@ -223,6 +216,7 @@
                 },
                 dataType: 'json',
                 success: function(){
+                    
                     window.open("../../../dhis-web-importexport/displayImportDataValueForm.action","_self");
                  }, //success
                 
