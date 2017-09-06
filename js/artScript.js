@@ -22,6 +22,7 @@
         jsonDataImport = [];
         var bypassItemArray = ['Cohort','OrgUnitCode','Duration', 'Age', 'OrgUnitName', 'Province', 'District', 'Subdistrict',
                           'CohortYear', 'ReportYear', 'ReportQuarter','pTOT','pKIDS','pChild1','pChild5','pChild15', 'PRG'];
+        //var catComboZero = [];
         
         document.getElementById("responseMessage").innerHTML = '';
         document.getElementById("conflictTable").innerHTML = '';
@@ -169,7 +170,13 @@
                             rowArray['dataElement'] = dataelementPrefix+jsonName;
                             rowArray['period'] = artPeriod;
                             rowArray['orgUnit'] = artOrgUnitCode;
-                            rowArray['categoryOptionCombo'] = catcombo;    
+                            
+                             //need to get the correct catoption
+                            //if (catComboZero.indexOf(jsonName) != -1){
+                                rowArray['categoryOptionCombo'] = catcombo;    
+                            //}else{
+                            //    rowArray['categoryOptionCombo'] = "AO4k8lTPUjo";
+                            //} //if'    
                             rowArray['value'] = parseInt(artQuarterly.children[j].textContent);
                             jsonDataImport.push(rowArray);
                         } //if bypass
@@ -184,12 +191,18 @@
 }
     */           
             } //for
+                console.log(jsonDataImport);
+                document.getElementById("responseMessage").classList.remove('text-danger');
+                document.getElementById("responseMessage").classList.add('text-info');
                 document.getElementById("spinner").style.display = "none";
                 document.getElementById("responseMessage").innerHTML = "File ready for import. <br/> Number of rows: " + jsonDataImport.length;
         }//try
             catch (err) {
                 if (err instanceof TypeError){
-                    document.getElementById("responseMessage").innerHTML = err.message + "<br/> This could indicate that the Cohort, OrgUnitCode or the Duration is missing from the xml file";    
+                     document.getElementById("responseMessage").classList.remove('text-info');
+                    document.getElementById("responseMessage").classList.add('text-danger');
+                    document.getElementById("responseMessage").innerHTML = err.message + "<br/> This could indicate that the Cohort, OrgUnitCode or the Duration is missing from the xml file";
+                    document.getElementById("spinner").style.display = "none";
                 }else{
                     throw err;
                 }   
@@ -221,6 +234,7 @@
                  }, //success
                 
                 error: function(error){
+                    document.getElementById("responseMessage").classList.add('text-danger');
                     document.getElementById("spinner").style.display = "none";
                     document.getElementById("responseMessage").innerHTML = error.description;
                 }
