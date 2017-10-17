@@ -21,7 +21,7 @@
     function findFile(e) {
         jsonDataImport = [];
         var bypassItemArray = ['Cohort','OrgUnitCode','Duration', 'Age', 'OrgUnitName', 'Province', 'District', 'Subdistrict',
-                          'CohortYear', 'ReportYear', 'ReportQuarter','pTOT','pKIDS','pChild1','pChild5','pChild15', 'PRG'];
+                          'CohortYear', 'ReportYear', 'ReportQuarter','pTOT','pKIDS','pChild1','pChild5','pChild15', 'PRG','checksum','period'];
         //var catComboZero = [];
         
         document.getElementById("responseMessage").innerHTML = '';
