@@ -12,7 +12,7 @@
             dhis2.settings.baseUrl = '';
         }
 
-        document.getElementById("fileID").addEventListener("change", findFile, false);
+        document.getElementById("fileID").addEventListener("change", findZipFile, false);
         document.getElementById("importButton").addEventListener("click", importFile, false);
 
         var jsonDataImport = [];
@@ -94,8 +94,28 @@
             return catcombo;
         }
 
-        function findFile(e) {
-            jsonDataImport = [];
+function findZipFile(e){
+    
+    var files = e.target.files;
+    
+    var zip = new JSZip();
+    zip.loadAsync( files[0] /* = file blob */)
+    .then(function(zip) {
+         // process ZIP file content here
+         Object.keys(zip.files).forEach(function (filename) 
+         {
+            zip.files[filename].async('string').then(function (fileData) 
+            {
+                getXMLValues(fileData, filename) // These are your file contents      
+            })
+        })
+     }, function() {
+            alert("Not a valid zip file")});                
+}
+
+function getXMLValues(xmlFile, filename){
+    
+    jsonDataImport = [];
 
             var bypassItemArray = ['Cohort', 'OrgUnitCode', 'Duration', 'Age', 'OrgUnitName', 'Province', 'District', 'Subdistrict',
                           'CohortYear', 'ReportYear', 'ReportQuarter', 'pTOT', 'pKIDS', 'pChild1', 'pChild5', 'pChild15', 'PRG', 'checksum', 'period'];
@@ -105,30 +125,26 @@
             document.getElementById("conflictTable").innerHTML = '';
 
             document.getElementById("spinner").style.display = "block";
-            var files = e.target.files;
+            
+            //var files = e.target.files;
+    
             var importType = "";
-            if ((files[0].name).includes("Quarterly")) {
+            if (filename.includes("Quarterly")) {
 
                 importType = "Quarterly";
-            } else if ((files[0].name).includes("Pregnant")) {
+            } else if (filename.includes("Pregnant")) {
 
                 importType = "Pregnant";
-            }
-
-
-            var reader = new FileReader();
-            reader.onload = function () {
-
-                var parsed = new DOMParser().parseFromString(this.result, "text/xml");
-
-                var cohortReturn = parsed.childNodes[0];
+            }    
+    
+               var cohortReturn = $(xmlFile).children();
                 // Retrieve each art record.
 
                 try {
                     var count = 0;
-                    for (var i = 0; i < cohortReturn.children.length; i++) {
+                    for (var i = 0; i < cohortReturn.length; i++) {
 
-                        var artQuarterly = cohortReturn.children[i];
+                        var artQuarterly = cohortReturn[i];
 
                         //orgUnit
                         var artOrgUnitCode = "";
@@ -223,11 +239,9 @@
                         throw err;
                     }
                 }
-            };
+}
 
-            reader.readAsText(files[0]);
-        }
-
+        
         function importFile() {
             var jsonObj = new Object;
             jsonObj['dataValues'] = jsonDataImport;
