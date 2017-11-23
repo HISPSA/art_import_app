@@ -1,9 +1,9 @@
 {
-	"version":"1.0"
+	"version":"1.1"
 	,"name":"ART import"
-	,"description":"NHC System Resolution"
+	,"description":"ART zip import"
 	,"icons":{"16":null,"48":"img/icons/icon.png","128":null}
-	,"developer":{"url":"","name":"Pooben Dass","company":null,"email":null}
+	,"developer":{"url":"","name":"Pooben Dass","www.hisp.org":null,"email":"pooben@hisp.org"}
 	,"launch_path":"index.html"
 	,"installs_allowed_from":null
 	,"default_locale":"en"

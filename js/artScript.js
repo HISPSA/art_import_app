@@ -12,6 +12,7 @@
             dhis2.settings.baseUrl = '';
         }
 
+        //Event listeners for the buttons
         document.getElementById("fileID").addEventListener("change", findZipFile, false);
         document.getElementById("importButton").addEventListener("click", importFile, false);
 
@@ -90,162 +91,158 @@
                 default:
                     catcombo = "JO2HBbjqU3c"; //"default"
             } //select
-            
+
             return catcombo;
         }
 
-function findZipFile(e){
-    
-    var files = e.target.files;
-    
-    var zip = new JSZip();
-    zip.loadAsync( files[0] /* = file blob */)
-    .then(function(zip) {
-         // process ZIP file content here
-         Object.keys(zip.files).forEach(function (filename) 
-         {
-            zip.files[filename].async('string').then(function (fileData) 
-            {
-                getXMLValues(fileData, filename) // These are your file contents      
-            })
-        })
-     }, function() {
-            alert("Not a valid zip file")});                
-}
+        function displayMessage(cssClassRemove, cssClassAdd, spinnerDisplay, msg) {
+            document.getElementById("responseMessage").classList.remove(cssClassRemove);
+            document.getElementById("responseMessage").classList.add(cssClassAdd);
+            document.getElementById("spinner").style.display = spinnerDisplay;
+            document.getElementById("responseMessage").innerHTML = msg;
+        }
 
-function getXMLValues(xmlFile, filename){
-    
-    jsonDataImport = [];
-
-            var bypassItemArray = ['Cohort', 'OrgUnitCode', 'Duration', 'Age', 'OrgUnitName', 'Province', 'District', 'Subdistrict',
-                          'CohortYear', 'ReportYear', 'ReportQuarter', 'pTOT', 'pKIDS', 'pChild1', 'pChild5', 'pChild15', 'PRG', 'checksum', 'period'];
-            //var catComboZero = [];
+        function findZipFile(e) {
 
             document.getElementById("responseMessage").innerHTML = '';
-            document.getElementById("conflictTable").innerHTML = '';
 
+            //Use this field to display items that cannot be displayed
+            document.getElementById("conflictTable").innerHTML = '';
+            //start the spinner for the unzipping and formatting of the xml file
             document.getElementById("spinner").style.display = "block";
-            
-            //var files = e.target.files;
-    
+
+            var files = e.target.files;
+
+            var zip = new JSZip();
+            zip.loadAsync(files[0] /* = file blob */ )
+                .then(function (zip) {
+                    // process ZIP file content here
+                    Object.keys(zip.files).forEach(function (filename) {
+                        zip.files[filename].async('string').then(function (fileData) {
+                            
+                            getXMLValues(fileData, filename) // These are your file contents      
+                        })
+                    })
+                }, function () {
+                    // display this as a responseMessage instead of an alert
+                    alert("Not a valid zip file")
+                });
+        }
+
+        function getXMLValues(xmlFile, filename) {
+
+            jsonDataImport = [];
+
+            var bypassItemArray = ['COHORT', 'ORGUNITCODE', 'DURATION', 'AGE', 'ORGUNITNAME', 'PROVINCE', 'DISTRICT', 'SUBDISTRICT',
+                          'COHORTYEAR', 'REPORTYEAR', 'REPORTQUARTER', 'PTOT', 'PKIDS', 'PCHILD1', 'PCHILD5', 'PCHILD15', 'PRG', 'CHECKSUM', 'PERIOD'];
+
             var importType = "";
+
             if (filename.includes("Quarterly")) {
 
                 importType = "Quarterly";
             } else if (filename.includes("Pregnant")) {
 
                 importType = "Pregnant";
-            }    
-    
-               var cohortReturn = $(xmlFile).children();
-                // Retrieve each art record.
+            }
 
-                try {
-                    var count = 0;
-                    for (var i = 0; i < cohortReturn.length; i++) {
+            var cohortReturn = $(xmlFile).children();
+            // Retrieve each art record.
 
-                        var artQuarterly = cohortReturn[i];
+            try {
+                var count = 0;
+                for (var i = 0; i < cohortReturn.length; i++) {
 
-                        //orgUnit
-                        var artOrgUnitCode = "";
+                    var artQuarterly = cohortReturn[i];
+                    
+                    //orgUnit
+                    var artOrgUnitCode = "";
 
-                        if (artQuarterly.getElementsByTagName('OrgUnitCode')[0].firstChild != null) {
-                            
-                            artOrgUnitCode = artQuarterly.getElementsByTagName('OrgUnitCode')[0].firstChild.nodeValue;
-                            //period
-                            var artPeriod = artQuarterly.getElementsByTagName('Cohort')[0].firstChild.nodeValue;
+                    if (artQuarterly.getElementsByTagName('ORGUNITCODE')[0].firstChild != null) {
 
-                            // category option duration
-                            var duration = artQuarterly.getElementsByTagName('Duration')[0].firstChild.nodeValue;
-                            var catComboUID = getCatComboUID(duration);
+                        artOrgUnitCode = artQuarterly.getElementsByTagName('ORGUNITCODE')[0].firstChild.nodeValue;
+                        //period
+                        var artPeriod = artQuarterly.getElementsByTagName('COHORT')[0].firstChild.nodeValue;
 
-                            var dataelementPrefix = '';
-                            age = artQuarterly.getElementsByTagName('Age')[0].firstChild.nodeValue;
+                        // category option duration
+                        var duration = artQuarterly.getElementsByTagName('DURATION')[0].firstChild.nodeValue;
+                        var catComboUID = getCatComboUID(duration);
 
+                        var dataelementPrefix = '';
+                        age = artQuarterly.getElementsByTagName('AGE')[0].firstChild.nodeValue;
+                        
+                        
+                        for (var j = 0; j < artQuarterly.children.length; j++) {
 
-                            for (var j = 0; j < artQuarterly.children.length; j++) {
+                            var jsonName = artQuarterly.children[j].tagName;
+                            if (bypassItemArray.indexOf(jsonName) === -1) {
 
-                                var jsonName = artQuarterly.children[j].tagName;
+                                var bypass = false;
+                                if (importType === "Pregnant") {
 
-                                if (bypassItemArray.indexOf(jsonName) === -1) {
+                                    if (jsonName === "PPRG") {
+                                        jsonName = "A_PRG";
+                                    }
 
-                                    var bypass = false;
-                                    if (importType === "Pregnant") {
+                                } else {
 
-                                        if (jsonName === "pPRG") {
-                                            jsonName = "A_PRG";
-                                        }
+                                    if (age === 'ADULTS') {
+                                        dataelementPrefix = 'A_';
+                                        if (jsonName === 'KIDS' || jsonName === 'CHILD1' || jsonName === 'CHILD5' || jsonName === 'CHILD15') {
+                                            bypass = true;
+                                        } //if
 
                                     } else {
+                                        dataelementPrefix = 'C_';
+                                        if (jsonName === 'TOT' || jsonName === 'MEN' || jsonName === 'WOM') {
+                                            bypass = true;
+                                        } //if else
+                                    } //if else age === ADULTS    
+                                } //if else import === Pregnant    
 
-                                        if (age === 'ADULTS') {
-                                            dataelementPrefix = 'A_';
-                                            if (jsonName === 'KIDS' || jsonName === 'Child1' || jsonName === 'Child5' || jsonName === 'Child15') {
-                                                bypass = true;
-                                            } //if
+                                if (!bypass) {
 
-                                        } else {
-                                            dataelementPrefix = 'C_';
-                                            if (jsonName === 'TOT' || jsonName === 'MEN' || jsonName === 'WOM') {
-                                                bypass = true;
-                                            } //if else
-                                        } //if else age === ADULTS    
-                                    } //if else import === Pregnant    
+                                    var rowArray = {};
+                                    rowArray['dataElement'] = dataelementPrefix + jsonName;
+                                    rowArray['period'] = artPeriod;
+                                    rowArray['orgUnit'] = artOrgUnitCode;
+                                    rowArray['categoryOptionCombo'] = catComboUID;
+                                    rowArray['value'] = parseInt(artQuarterly.children[j].textContent);
 
-                                    if (!bypass) {
+                                    jsonDataImport.push(rowArray);
 
-                                        var rowArray = {};
-                                        rowArray['dataElement'] = dataelementPrefix + jsonName;
-                                        rowArray['period'] = artPeriod;
-                                        rowArray['orgUnit'] = artOrgUnitCode;
+                                } //if bypass
 
-                                        //need to get the correct catoption
-                                        //if (catComboZero.indexOf(jsonName) != -1){
-                                        rowArray['categoryOptionCombo'] = catComboUID;
-                                        //}else{
-                                        //    rowArray['categoryOptionCombo'] = "AO4k8lTPUjo";
-                                        //} //if'    
-                                        rowArray['value'] = parseInt(artQuarterly.children[j].textContent);
+                            } //if bypassItemArray
+                        } //for
 
-
-                                        jsonDataImport.push(rowArray);
-
-                                    } //if bypass
-
-                                } //if bypassItemArray
-                            } //for
-
-                        } // if orgcode not null
-                        else {
-                            count = count + 1;
-                        }
-
-                    } //for
-
-                    document.getElementById("responseMessage").classList.remove('text-danger');
-                    document.getElementById("responseMessage").classList.add('text-info');
-                    document.getElementById("spinner").style.display = "none";
-                    document.getElementById("responseMessage").innerHTML = "File ready for import. <br/> Number of rows: " + jsonDataImport.length +
-                        "<br/>" + count + " Records with org unit code missing from import file.";
-                } //try
-                catch (err) {
-                    if (err instanceof TypeError) {
-                        document.getElementById("responseMessage").classList.remove('text-info');
-                        document.getElementById("responseMessage").classList.add('text-danger');
-                        document.getElementById("responseMessage").innerHTML = err.message + "<br/> This could indicate that the Cohort, OrgUnitCode or the Duration is missing from the xml file";
-                        document.getElementById("spinner").style.display = "none";
-
-                    } else {
-                        throw err;
+                    } // if orgcode not null
+                    else {
+                        count = count + 1;
                     }
-                }
-}
 
-        
+                } //for
+
+                displayMessage('text-danger', 'text-info', 'none', "File ready for import. <br/> Number items for importing: " + jsonDataImport.length +
+                    "<br/>" + count + " Items with org unit code missing from zip file.");
+            } //try
+            catch (err) {
+                if (err instanceof TypeError) {
+
+                    displayMessage('text-info', 'text-danger', 'none', err.message + "<br/> This could indicate that the Cohort or the Duration is missing from the xml file");
+
+                } else {
+                    throw err;
+                }
+            }
+        }
+
+
         function importFile() {
             var jsonObj = new Object;
             jsonObj['dataValues'] = jsonDataImport;
             var jsonData = JSON.stringify(jsonObj);
+            //start the spinner for the import into dhis
             document.getElementById("spinner").style.display = "block";
 
             var url = 'api/dataValueSets?dataElementIdScheme=code&orgUnitIdScheme=code&async=true&dryRun=false&importStrategy=CREATE_AND_UPDATE';
@@ -264,8 +261,10 @@ function getXMLValues(xmlFile, filename){
                 }, //success
 
                 error: function (error) {
+
                     document.getElementById("responseMessage").classList.add('text-danger');
                     document.getElementById("spinner").style.display = "none";
+
                     document.getElementById("responseMessage").innerHTML = error.description;
                 }
 
